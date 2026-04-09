@@ -91,16 +91,19 @@ public class TrainConsistManagementApp {
             int mid = (low + high) / 2;
             int cmp = ids[mid].compareTo(key);
 
-            if (cmp == 0) {
-                return true;
-            } else if (cmp < 0) {
-                low = mid + 1;
-            } else {
-                high = mid - 1;
-            }
+            if (cmp == 0) return true;
+            else if (cmp < 0) low = mid + 1;
+            else high = mid - 1;
         }
 
         return false;
+    }
+
+    public static boolean validatedSearch(String[] ids, String key) {
+        if (ids == null || ids.length == 0) {
+            throw new IllegalStateException("Search operation failed: No bogies available in the train");
+        }
+        return binarySearch(ids, key);
     }
 
     public static void main(String[] args) {
@@ -120,11 +123,7 @@ public class TrainConsistManagementApp {
         }
 
         bogieList.sort(Comparator.comparingInt(b -> b.capacity));
-
-        System.out.println("\nBogies sorted by capacity:");
         bogieList.forEach(System.out::println);
-
-        System.out.println("\n=== UC17 ===");
 
         String[] bogieNames = new String[bogieList.size()];
         for (int i = 0; i < bogieList.size(); i++) {
@@ -134,19 +133,14 @@ public class TrainConsistManagementApp {
         java.util.Arrays.sort(bogieNames);
         System.out.println(java.util.Arrays.toString(bogieNames));
 
-        System.out.println("\n=== UC18 ===");
-
         String[] bogieIds = {"BG101","BG205","BG309","BG412","BG550"};
-        System.out.println(linearSearch(bogieIds, "BG309"));
 
-        System.out.println("\n=== UC19: Binary Search ===");
-
-        String[] ids = {"BG101","BG205","BG309","BG412","BG550"};
-        String key = "BG309";
-
-        boolean found = binarySearch(ids, key);
-
-        System.out.println(found ? "Bogie Found" : "Bogie Not Found");
+        try {
+            boolean result = validatedSearch(bogieIds, "BG309");
+            System.out.println(result ? "Bogie Found" : "Bogie Not Found");
+        } catch (IllegalStateException e) {
+            System.out.println(e.getMessage());
+        }
 
         List<Bogie> filteredBogies = bogieList.stream()
                 .filter(b -> b.capacity > 60)
