@@ -458,4 +458,62 @@ class TrainConsistManagementAppTest {
         assertEquals(56, acChair.capacity);
         assertEquals(24, firstClass.capacity);
     }
+
+    @Test
+    void testCargo_SafeAssignment() {
+        GoodsBogie bogie = new GoodsBogie("Cylindrical", "Empty");
+
+        bogie.assignCargo("Petroleum");
+
+        assertEquals("Petroleum", bogie.cargo);
+    }
+
+    @Test
+    void testCargo_UnsafeAssignmentHandled() {
+        GoodsBogie bogie = new GoodsBogie("Rectangular", "Empty");
+
+        assertDoesNotThrow(() -> bogie.assignCargo("Petroleum"));
+    }
+
+    @Test
+    void testCargo_CargoNotAssignedAfterFailure() {
+        GoodsBogie bogie = new GoodsBogie("Rectangular", "Empty");
+
+        bogie.assignCargo("Petroleum");
+
+        assertNotEquals("Petroleum", bogie.cargo);
+        assertEquals("Empty", bogie.cargo);
+    }
+
+    @Test
+    void testCargo_ProgramContinuesAfterException() {
+        GoodsBogie rectangular = new GoodsBogie("Rectangular", "Empty");
+        GoodsBogie cylindrical = new GoodsBogie("Cylindrical", "Empty");
+
+        rectangular.assignCargo("Petroleum");
+        cylindrical.assignCargo("Petroleum");
+
+        assertEquals("Empty",     rectangular.cargo);
+        assertEquals("Petroleum", cylindrical.cargo);
+    }
+
+    @Test
+    void testCargo_FinallyBlockExecution() {
+        GoodsBogie bogie = new GoodsBogie("Rectangular", "Empty");
+        boolean[] finallyExecuted = {false};
+
+        try {
+            if (bogie.type.equals("Rectangular") && "Petroleum".equals("Petroleum")) {
+                throw new CargoSafetyException(
+                        "Unsafe assignment: Petroleum cannot be assigned to a Rectangular bogie");
+            }
+            bogie.cargo = "Petroleum";
+        } catch (CargoSafetyException e) {
+            assertNotNull(e.getMessage());
+        } finally {
+            finallyExecuted[0] = true;
+        }
+
+        assertTrue(finallyExecuted[0]);
+    }
 }
