@@ -4,32 +4,34 @@ import static org.junit.jupiter.api.Assertions.*;
 class TrainConsistManagementAppTest {
 
     @Test
-    void testSearch_BogieFound() {
-        String[] ids = {"BG101","BG205","BG309","BG412","BG550"};
-        assertTrue(TrainConsistManagementApp.linearSearch(ids, "BG309"));
+    void testSearch_ThrowsExceptionWhenEmpty() {
+        String[] ids = {};
+        assertThrows(IllegalStateException.class,
+                () -> TrainConsistManagementApp.validatedSearch(ids, "BG101"));
     }
 
     @Test
-    void testSearch_BogieNotFound() {
-        String[] ids = {"BG101","BG205","BG309","BG412","BG550"};
-        assertFalse(TrainConsistManagementApp.linearSearch(ids, "BG999"));
+    void testSearch_AllowsSearchWhenDataExists() {
+        String[] ids = {"BG101","BG205"};
+        assertDoesNotThrow(() ->
+                TrainConsistManagementApp.validatedSearch(ids, "BG101"));
     }
 
     @Test
-    void testSearch_FirstElementMatch() {
-        String[] ids = {"BG101","BG205","BG309","BG412","BG550"};
-        assertTrue(TrainConsistManagementApp.linearSearch(ids, "BG101"));
+    void testSearch_BogieFoundAfterValidation() {
+        String[] ids = {"BG101","BG205","BG309"};
+        assertTrue(TrainConsistManagementApp.validatedSearch(ids, "BG205"));
     }
 
     @Test
-    void testSearch_LastElementMatch() {
-        String[] ids = {"BG101","BG205","BG309","BG412","BG550"};
-        assertTrue(TrainConsistManagementApp.linearSearch(ids, "BG550"));
+    void testSearch_BogieNotFoundAfterValidation() {
+        String[] ids = {"BG101","BG205","BG309"};
+        assertFalse(TrainConsistManagementApp.validatedSearch(ids, "BG999"));
     }
 
     @Test
-    void testSearch_SingleElementArray() {
+    void testSearch_SingleElementValidCase() {
         String[] ids = {"BG101"};
-        assertTrue(TrainConsistManagementApp.linearSearch(ids, "BG101"));
+        assertTrue(TrainConsistManagementApp.validatedSearch(ids, "BG101"));
     }
 }

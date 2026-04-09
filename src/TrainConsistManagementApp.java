@@ -30,7 +30,6 @@ class Bogie {
         this.capacity = capacity;
     }
 
-    @Override
     public String toString() {
         return name + " -> Capacity: " + capacity;
     }
@@ -59,7 +58,6 @@ class GoodsBogie {
         }
     }
 
-    @Override
     public String toString() {
         return "Type: " + type + " | Cargo: " + cargo;
     }
@@ -81,6 +79,33 @@ public class TrainConsistManagementApp {
         return false;
     }
 
+    public static boolean binarySearch(String[] ids, String key) {
+        if (ids.length == 0) return false;
+
+        java.util.Arrays.sort(ids);
+
+        int low = 0;
+        int high = ids.length - 1;
+
+        while (low <= high) {
+            int mid = (low + high) / 2;
+            int cmp = ids[mid].compareTo(key);
+
+            if (cmp == 0) return true;
+            else if (cmp < 0) low = mid + 1;
+            else high = mid - 1;
+        }
+
+        return false;
+    }
+
+    public static boolean validatedSearch(String[] ids, String key) {
+        if (ids == null || ids.length == 0) {
+            throw new IllegalStateException("Search operation failed: No bogies available in the train");
+        }
+        return binarySearch(ids, key);
+    }
+
     public static void main(String[] args) {
 
         System.out.println("=== Train Consist Management App ===");
@@ -98,11 +123,7 @@ public class TrainConsistManagementApp {
         }
 
         bogieList.sort(Comparator.comparingInt(b -> b.capacity));
-
-        System.out.println("\nBogies sorted by capacity:");
         bogieList.forEach(System.out::println);
-
-        System.out.println("\n=== UC17 ===");
 
         String[] bogieNames = new String[bogieList.size()];
         for (int i = 0; i < bogieList.size(); i++) {
@@ -112,24 +133,19 @@ public class TrainConsistManagementApp {
         java.util.Arrays.sort(bogieNames);
         System.out.println(java.util.Arrays.toString(bogieNames));
 
-        System.out.println("\n=== UC18: Linear Search for Bogie ID ===");
-
         String[] bogieIds = {"BG101","BG205","BG309","BG412","BG550"};
-        String searchKey = "BG309";
 
-        boolean found = linearSearch(bogieIds, searchKey);
-
-        if (found) {
-            System.out.println("Bogie ID " + searchKey + " found");
-        } else {
-            System.out.println("Bogie ID " + searchKey + " not found");
+        try {
+            boolean result = validatedSearch(bogieIds, "BG309");
+            System.out.println(result ? "Bogie Found" : "Bogie Not Found");
+        } catch (IllegalStateException e) {
+            System.out.println(e.getMessage());
         }
 
         List<Bogie> filteredBogies = bogieList.stream()
                 .filter(b -> b.capacity > 60)
                 .collect(Collectors.toList());
 
-        System.out.println("\nFiltered Bogies:");
         filteredBogies.forEach(System.out::println);
 
         Map<String, List<Bogie>> groupedBogies = bogieList.stream()
@@ -146,8 +162,8 @@ public class TrainConsistManagementApp {
 
         System.out.println("\nTotal Seats: " + totalSeats);
 
-        Pattern trainIdPattern = Pattern.compile("TRN-\\d{4}");
-        Matcher matcher = trainIdPattern.matcher("TRN-1234");
+        Pattern pattern = Pattern.compile("TRN-\\d{4}");
+        Matcher matcher = pattern.matcher("TRN-1234");
         System.out.println("\nTrain ID Valid: " + matcher.matches());
     }
 }
