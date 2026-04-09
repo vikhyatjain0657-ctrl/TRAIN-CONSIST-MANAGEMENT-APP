@@ -21,6 +21,21 @@ class Bogie {
     }
 }
 
+class GoodsBogie {
+    String type;
+    String cargo;
+
+    GoodsBogie(String type, String cargo) {
+        this.type = type;
+        this.cargo = cargo;
+    }
+
+    @Override
+    public String toString() {
+        return "Type: " + type + " | Cargo: " + cargo;
+    }
+}
+
 public class TrainConsistManagementApp {
 
     public static void main(String[] args) {
@@ -89,6 +104,26 @@ public class TrainConsistManagementApp {
             System.out.println("Cargo Code: " + cargoCode + " -> Valid");
         } else {
             System.out.println("Cargo Code: " + cargoCode + " -> Invalid");
+        }
+
+        System.out.println("\n=== UC12: Safety Compliance Check for Goods Bogies ===");
+
+        List<GoodsBogie> goodsBogieList = new ArrayList<>();
+
+        goodsBogieList.add(new GoodsBogie("Cylindrical", "Petroleum"));
+        goodsBogieList.add(new GoodsBogie("Rectangular", "Coal"));
+        goodsBogieList.add(new GoodsBogie("Cylindrical", "Petroleum"));
+
+        boolean isSafetyCompliant = goodsBogieList.stream()
+                .allMatch(b -> !b.type.equals("Cylindrical") || b.cargo.equals("Petroleum"));
+
+        System.out.println("\nGoods Bogies:");
+        goodsBogieList.forEach(b -> System.out.println("  " + b));
+
+        if (isSafetyCompliant) {
+            System.out.println("\nSafety Compliance Status: SAFE");
+        } else {
+            System.out.println("\nSafety Compliance Status: UNSAFE - Rule Violation Detected");
         }
     }
 }
