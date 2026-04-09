@@ -12,6 +12,12 @@ class InvalidCapacityException extends Exception {
     }
 }
 
+class CargoSafetyException extends RuntimeException {
+    CargoSafetyException(String message) {
+        super(message);
+    }
+}
+
 class Bogie {
     String name;
     int capacity;
@@ -37,6 +43,21 @@ class GoodsBogie {
     GoodsBogie(String type, String cargo) {
         this.type = type;
         this.cargo = cargo;
+    }
+
+    void assignCargo(String newCargo) {
+        try {
+            if (this.type.equals("Rectangular") && newCargo.equals("Petroleum")) {
+                throw new CargoSafetyException(
+                        "Unsafe assignment: Petroleum cannot be assigned to a Rectangular bogie");
+            }
+            this.cargo = newCargo;
+            System.out.println("Cargo assigned successfully: " + newCargo + " -> " + this.type);
+        } catch (CargoSafetyException e) {
+            System.out.println("Cargo assignment failed: " + e.getMessage());
+        } finally {
+            System.out.println("Cargo assignment validation completed for bogie type: " + this.type);
+        }
     }
 
     @Override
@@ -158,17 +179,15 @@ public class TrainConsistManagementApp {
             }
         }
         long loopEnd = System.nanoTime();
-        long loopElapsed = loopEnd - loopStart;
 
         long streamStart = System.nanoTime();
         List<Bogie> streamResult = largeBogieList.stream()
                 .filter(b -> b.capacity > 60)
                 .collect(Collectors.toList());
         long streamEnd = System.nanoTime();
-        long streamElapsed = streamEnd - streamStart;
 
-        System.out.println("\nLoop-based filtering time  : " + loopElapsed + " ns");
-        System.out.println("Stream-based filtering time: " + streamElapsed + " ns");
+        System.out.println("\nLoop-based filtering time  : " + (loopEnd - loopStart) + " ns");
+        System.out.println("Stream-based filtering time: " + (streamEnd - streamStart) + " ns");
         System.out.println("Loop result count          : " + loopResult.size());
         System.out.println("Stream result count        : " + streamResult.size());
 
@@ -194,5 +213,23 @@ public class TrainConsistManagementApp {
         } catch (InvalidCapacityException e) {
             System.out.println("Caught Exception -> " + e.getMessage());
         }
+
+        System.out.println("\n=== UC15: Safe Cargo Assignment Using try-catch-finally ===");
+
+        GoodsBogie cylindricalBogie = new GoodsBogie("Cylindrical", "Empty");
+        GoodsBogie rectangularBogie = new GoodsBogie("Rectangular", "Empty");
+
+        System.out.println("\nAssigning Petroleum to Cylindrical bogie (safe):");
+        cylindricalBogie.assignCargo("Petroleum");
+
+        System.out.println("\nAssigning Petroleum to Rectangular bogie (unsafe):");
+        rectangularBogie.assignCargo("Petroleum");
+
+        System.out.println("\nAssigning Coal to Rectangular bogie (safe):");
+        rectangularBogie.assignCargo("Coal");
+
+        System.out.println("\nFinal Bogie States:");
+        System.out.println("  " + cylindricalBogie);
+        System.out.println("  " + rectangularBogie);
     }
 }
