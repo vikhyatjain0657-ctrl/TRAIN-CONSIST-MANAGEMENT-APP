@@ -68,25 +68,9 @@ class GoodsBogie {
 
 public class TrainConsistManagementApp {
 
-    public static int[] bubbleSort(int[] arr) {
-        int n = arr.length;
-
-        for (int i = 0; i < n - 1; i++) {
-            boolean swapped = false;
-
-            for (int j = 0; j < n - i - 1; j++) {
-                if (arr[j] > arr[j + 1]) {
-                    int temp = arr[j];
-                    arr[j] = arr[j + 1];
-                    arr[j + 1] = temp;
-                    swapped = true;
-                }
-            }
-
-            if (!swapped) break;
-        }
-
-        return arr;
+    public static String[] sortBogieNames(String[] names) {
+        java.util.Arrays.sort(names);
+        return names;
     }
 
     public static void main(String[] args) {
@@ -111,6 +95,18 @@ public class TrainConsistManagementApp {
         for (Bogie b : bogieList) {
             System.out.println(b);
         }
+
+        System.out.println("\n=== UC17: Sorting Bogie Names Using Arrays.sort() ===");
+
+        String[] bogieNames = new String[bogieList.size()];
+
+        for (int i = 0; i < bogieList.size(); i++) {
+            bogieNames[i] = bogieList.get(i).name;
+        }
+
+        java.util.Arrays.sort(bogieNames);
+
+        System.out.println(java.util.Arrays.toString(bogieNames));
 
         List<Bogie> filteredBogies = bogieList.stream()
                 .filter(b -> b.capacity > 60)
@@ -149,17 +145,8 @@ public class TrainConsistManagementApp {
 
         System.out.println("\n=== UC11: Train ID & Cargo Code Validation ===");
 
-        if (trainIdMatcher.matches()) {
-            System.out.println("Train ID: " + trainId + " -> Valid");
-        } else {
-            System.out.println("Train ID: " + trainId + " -> Invalid");
-        }
-
-        if (cargoCodeMatcher.matches()) {
-            System.out.println("Cargo Code: " + cargoCode + " -> Valid");
-        } else {
-            System.out.println("Cargo Code: " + cargoCode + " -> Invalid");
-        }
+        System.out.println("Train ID: " + trainId + " -> " + (trainIdMatcher.matches() ? "Valid" : "Invalid"));
+        System.out.println("Cargo Code: " + cargoCode + " -> " + (cargoCodeMatcher.matches() ? "Valid" : "Invalid"));
 
         System.out.println("\n=== UC12: Safety Compliance Check for Goods Bogies ===");
 
@@ -172,84 +159,20 @@ public class TrainConsistManagementApp {
         boolean isSafetyCompliant = goodsBogieList.stream()
                 .allMatch(b -> !b.type.equals("Cylindrical") || b.cargo.equals("Petroleum"));
 
-        System.out.println("\nGoods Bogies:");
         goodsBogieList.forEach(b -> System.out.println("  " + b));
 
-        if (isSafetyCompliant) {
-            System.out.println("\nSafety Compliance Status: SAFE");
-        } else {
-            System.out.println("\nSafety Compliance Status: UNSAFE - Rule Violation Detected");
-        }
+        System.out.println(isSafetyCompliant ? "\nSafety Compliance Status: SAFE"
+                : "\nSafety Compliance Status: UNSAFE");
 
-        System.out.println("\n=== UC13: Performance Comparison (Loops vs Streams) ===");
-
-        List<Bogie> largeBogieList = new ArrayList<>();
-        try {
-            for (int i = 0; i < 100000; i++) {
-                largeBogieList.add(new Bogie("Sleeper", 50 + (i % 50)));
-            }
-        } catch (InvalidCapacityException e) {
-            System.out.println("Error: " + e.getMessage());
-        }
-
-        long loopStart = System.nanoTime();
-        List<Bogie> loopResult = new ArrayList<>();
-        for (Bogie b : largeBogieList) {
-            if (b.capacity > 60) {
-                loopResult.add(b);
-            }
-        }
-        long loopEnd = System.nanoTime();
-
-        long streamStart = System.nanoTime();
-        List<Bogie> streamResult = largeBogieList.stream()
-                .filter(b -> b.capacity > 60)
-                .collect(Collectors.toList());
-        long streamEnd = System.nanoTime();
-
-        System.out.println("\nLoop-based filtering time  : " + (loopEnd - loopStart) + " ns");
-        System.out.println("Stream-based filtering time: " + (streamEnd - streamStart) + " ns");
-        System.out.println("Loop result count          : " + loopResult.size());
-        System.out.println("Stream result count        : " + streamResult.size());
-
-        System.out.println("\n=== UC14: Handle Invalid Bogie Capacity (Custom Exception) ===");
-
-        try {
-            Bogie validBogie = new Bogie("Sleeper", 72);
-            System.out.println("Created bogie: " + validBogie);
-        } catch (InvalidCapacityException e) {
-            System.out.println("Error: " + e.getMessage());
-        }
-
-        try {
-            Bogie invalidBogie = new Bogie("Sleeper", -10);
-            System.out.println("Created bogie: " + invalidBogie);
-        } catch (InvalidCapacityException e) {
-            System.out.println("Caught Exception -> " + e.getMessage());
-        }
-
-        try {
-            Bogie zeroBogie = new Bogie("AC Chair", 0);
-            System.out.println("Created bogie: " + zeroBogie);
-        } catch (InvalidCapacityException e) {
-            System.out.println("Caught Exception -> " + e.getMessage());
-        }
-
-        System.out.println("\n=== UC15: Safe Cargo Assignment Using try-catch-finally ===");
+        System.out.println("\n=== UC15: Safe Cargo Assignment ===");
 
         GoodsBogie cylindricalBogie = new GoodsBogie("Cylindrical", "Empty");
         GoodsBogie rectangularBogie = new GoodsBogie("Rectangular", "Empty");
 
-        System.out.println("\nAssigning Petroleum to Cylindrical bogie (safe):");
         cylindricalBogie.assignCargo("Petroleum");
-
-        System.out.println("\nAssigning Petroleum to Rectangular bogie (unsafe):");
         rectangularBogie.assignCargo("Petroleum");
-
-        System.out.println("\nAssigning Coal to Rectangular bogie (safe):");
         rectangularBogie.assignCargo("Coal");
 
-        System.out.println("\nFinal Bogie States:");
         System.out.println("  " + cylindricalBogie);
         System.out.println("  " + rectangularBogie);
     }
