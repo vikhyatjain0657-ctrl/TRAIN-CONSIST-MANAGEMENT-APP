@@ -32,6 +32,11 @@ class TrainConsistManagementAppTest {
         return matcher.matches();
     }
 
+    private boolean isSafetyCompliant(List<GoodsBogie> goodsBogieList) {
+        return goodsBogieList.stream()
+                .allMatch(b -> !b.type.equals("Cylindrical") || b.cargo.equals("Petroleum"));
+    }
+
     @Test
     void testGrouping_BogiesGroupedByType() {
         List<Bogie> bogieList = new ArrayList<>();
@@ -146,9 +151,7 @@ class TrainConsistManagementAppTest {
         bogieList.add(new Bogie("AC Chair", 56));
         bogieList.add(new Bogie("First Class", 24));
 
-        int total = getTotalSeats(bogieList);
-
-        assertEquals(152, total);
+        assertEquals(152, getTotalSeats(bogieList));
     }
 
     @Test
@@ -160,9 +163,7 @@ class TrainConsistManagementAppTest {
         bogieList.add(new Bogie("AC Chair", 60));
         bogieList.add(new Bogie("First Class", 24));
 
-        int total = getTotalSeats(bogieList);
-
-        assertEquals(280, total);
+        assertEquals(280, getTotalSeats(bogieList));
     }
 
     @Test
@@ -170,18 +171,14 @@ class TrainConsistManagementAppTest {
         List<Bogie> bogieList = new ArrayList<>();
         bogieList.add(new Bogie("Sleeper", 72));
 
-        int total = getTotalSeats(bogieList);
-
-        assertEquals(72, total);
+        assertEquals(72, getTotalSeats(bogieList));
     }
 
     @Test
     void testReduce_EmptyBogieList() {
         List<Bogie> bogieList = new ArrayList<>();
 
-        int total = getTotalSeats(bogieList);
-
-        assertEquals(0, total);
+        assertEquals(0, getTotalSeats(bogieList));
     }
 
     @Test
@@ -206,10 +203,7 @@ class TrainConsistManagementAppTest {
         bogieList.add(new Bogie("AC Chair", 56));
         bogieList.add(new Bogie("First Class", 24));
 
-        int total = getTotalSeats(bogieList);
-        int manualSum = 72 + 56 + 24;
-
-        assertEquals(manualSum, total);
+        assertEquals(72 + 56 + 24, getTotalSeats(bogieList));
     }
 
     @Test
@@ -277,5 +271,51 @@ class TrainConsistManagementAppTest {
         assertFalse(validateTrainId("XTRN-1234"));
         assertFalse(validateCargoCode("PET-ABC"));
         assertFalse(validateCargoCode("XPET-AB"));
+    }
+
+    @Test
+    void testSafety_AllBogiesValid() {
+        List<GoodsBogie> goodsBogieList = new ArrayList<>();
+        goodsBogieList.add(new GoodsBogie("Cylindrical", "Petroleum"));
+        goodsBogieList.add(new GoodsBogie("Cylindrical", "Petroleum"));
+        goodsBogieList.add(new GoodsBogie("Rectangular", "Coal"));
+
+        assertTrue(isSafetyCompliant(goodsBogieList));
+    }
+
+    @Test
+    void testSafety_CylindricalWithInvalidCargo() {
+        List<GoodsBogie> goodsBogieList = new ArrayList<>();
+        goodsBogieList.add(new GoodsBogie("Cylindrical", "Coal"));
+        goodsBogieList.add(new GoodsBogie("Rectangular", "Grain"));
+
+        assertFalse(isSafetyCompliant(goodsBogieList));
+    }
+
+    @Test
+    void testSafety_NonCylindricalBogiesAllowed() {
+        List<GoodsBogie> goodsBogieList = new ArrayList<>();
+        goodsBogieList.add(new GoodsBogie("Rectangular", "Coal"));
+        goodsBogieList.add(new GoodsBogie("Rectangular", "Grain"));
+        goodsBogieList.add(new GoodsBogie("Rectangular", "Petroleum"));
+
+        assertTrue(isSafetyCompliant(goodsBogieList));
+    }
+
+    @Test
+    void testSafety_MixedBogiesWithViolation() {
+        List<GoodsBogie> goodsBogieList = new ArrayList<>();
+        goodsBogieList.add(new GoodsBogie("Cylindrical", "Petroleum"));
+        goodsBogieList.add(new GoodsBogie("Cylindrical", "Coal"));
+        goodsBogieList.add(new GoodsBogie("Rectangular", "Grain"));
+
+        assertFalse(isSafetyCompliant(goodsBogieList));
+    }
+
+    @Test
+    void testSafety_EmptyBogieList() {
+        List<GoodsBogie> goodsBogieList = new ArrayList<>();
+
+        assertTrue(isSafetyCompliant(goodsBogieList));
     }
 }
