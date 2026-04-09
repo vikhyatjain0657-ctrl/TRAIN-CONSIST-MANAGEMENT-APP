@@ -3,6 +3,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TrainConsistManagementAppTest {
@@ -16,6 +18,18 @@ class TrainConsistManagementAppTest {
         return bogieList.stream()
                 .map(b -> b.capacity)
                 .reduce(0, Integer::sum);
+    }
+
+    private boolean validateTrainId(String input) {
+        Pattern pattern = Pattern.compile("TRN-\\d{4}");
+        Matcher matcher = pattern.matcher(input);
+        return matcher.matches();
+    }
+
+    private boolean validateCargoCode(String input) {
+        Pattern pattern = Pattern.compile("PET-[A-Z]{2}");
+        Matcher matcher = pattern.matcher(input);
+        return matcher.matches();
     }
 
     @Test
@@ -212,5 +226,56 @@ class TrainConsistManagementAppTest {
         assertEquals("Sleeper",     bogieList.get(0).name);
         assertEquals("AC Chair",    bogieList.get(1).name);
         assertEquals("First Class", bogieList.get(2).name);
+    }
+
+    @Test
+    void testRegex_ValidTrainID() {
+        assertTrue(validateTrainId("TRN-1234"));
+    }
+
+    @Test
+    void testRegex_InvalidTrainIDFormat() {
+        assertFalse(validateTrainId("TRAIN12"));
+        assertFalse(validateTrainId("TRN12A"));
+        assertFalse(validateTrainId("1234-TRN"));
+    }
+
+    @Test
+    void testRegex_ValidCargoCode() {
+        assertTrue(validateCargoCode("PET-AB"));
+    }
+
+    @Test
+    void testRegex_InvalidCargoCodeFormat() {
+        assertFalse(validateCargoCode("PET-ab"));
+        assertFalse(validateCargoCode("PET123"));
+        assertFalse(validateCargoCode("AB-PET"));
+    }
+
+    @Test
+    void testRegex_TrainIDDigitLengthValidation() {
+        assertFalse(validateTrainId("TRN-123"));
+        assertFalse(validateTrainId("TRN-12345"));
+    }
+
+    @Test
+    void testRegex_CargoCodeUppercaseValidation() {
+        assertFalse(validateCargoCode("PET-ab"));
+        assertFalse(validateCargoCode("PET-Ab"));
+        assertFalse(validateCargoCode("PET-aB"));
+    }
+
+    @Test
+    void testRegex_EmptyInputHandling() {
+        assertFalse(validateTrainId(""));
+        assertFalse(validateCargoCode(""));
+    }
+
+    @Test
+    void testRegex_ExactPatternMatch() {
+        assertFalse(validateTrainId("TRN-1234X"));
+        assertFalse(validateTrainId("XTRN-1234"));
+        assertFalse(validateCargoCode("PET-ABC"));
+        assertFalse(validateCargoCode("XPET-AB"));
     }
 }
