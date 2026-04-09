@@ -6,11 +6,20 @@ import java.util.stream.Collectors;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
+class InvalidCapacityException extends Exception {
+    InvalidCapacityException(String message) {
+        super(message);
+    }
+}
+
 class Bogie {
     String name;
     int capacity;
 
-    Bogie(String name, int capacity) {
+    Bogie(String name, int capacity) throws InvalidCapacityException {
+        if (capacity <= 0) {
+            throw new InvalidCapacityException("Capacity must be greater than zero");
+        }
         this.name = name;
         this.capacity = capacity;
     }
@@ -44,11 +53,15 @@ public class TrainConsistManagementApp {
 
         List<Bogie> bogieList = new ArrayList<>();
 
-        bogieList.add(new Bogie("Sleeper", 72));
-        bogieList.add(new Bogie("AC Chair", 56));
-        bogieList.add(new Bogie("First Class", 24));
-        bogieList.add(new Bogie("Sleeper", 68));
-        bogieList.add(new Bogie("AC Chair", 60));
+        try {
+            bogieList.add(new Bogie("Sleeper", 72));
+            bogieList.add(new Bogie("AC Chair", 56));
+            bogieList.add(new Bogie("First Class", 24));
+            bogieList.add(new Bogie("Sleeper", 68));
+            bogieList.add(new Bogie("AC Chair", 60));
+        } catch (InvalidCapacityException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
 
         bogieList.sort(Comparator.comparingInt(b -> b.capacity));
 
@@ -129,8 +142,12 @@ public class TrainConsistManagementApp {
         System.out.println("\n=== UC13: Performance Comparison (Loops vs Streams) ===");
 
         List<Bogie> largeBogieList = new ArrayList<>();
-        for (int i = 0; i < 100000; i++) {
-            largeBogieList.add(new Bogie("Sleeper", 50 + (i % 50)));
+        try {
+            for (int i = 0; i < 100000; i++) {
+                largeBogieList.add(new Bogie("Sleeper", 50 + (i % 50)));
+            }
+        } catch (InvalidCapacityException e) {
+            System.out.println("Error: " + e.getMessage());
         }
 
         long loopStart = System.nanoTime();
@@ -154,5 +171,28 @@ public class TrainConsistManagementApp {
         System.out.println("Stream-based filtering time: " + streamElapsed + " ns");
         System.out.println("Loop result count          : " + loopResult.size());
         System.out.println("Stream result count        : " + streamResult.size());
+
+        System.out.println("\n=== UC14: Handle Invalid Bogie Capacity (Custom Exception) ===");
+
+        try {
+            Bogie validBogie = new Bogie("Sleeper", 72);
+            System.out.println("Created bogie: " + validBogie);
+        } catch (InvalidCapacityException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+
+        try {
+            Bogie invalidBogie = new Bogie("Sleeper", -10);
+            System.out.println("Created bogie: " + invalidBogie);
+        } catch (InvalidCapacityException e) {
+            System.out.println("Caught Exception -> " + e.getMessage());
+        }
+
+        try {
+            Bogie zeroBogie = new Bogie("AC Chair", 0);
+            System.out.println("Created bogie: " + zeroBogie);
+        } catch (InvalidCapacityException e) {
+            System.out.println("Caught Exception -> " + e.getMessage());
+        }
     }
 }
