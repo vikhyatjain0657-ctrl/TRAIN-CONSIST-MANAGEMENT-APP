@@ -37,6 +37,22 @@ class TrainConsistManagementAppTest {
                 .allMatch(b -> !b.type.equals("Cylindrical") || b.cargo.equals("Petroleum"));
     }
 
+    private List<Bogie> filterByLoop(List<Bogie> bogieList, int threshold) {
+        List<Bogie> result = new ArrayList<>();
+        for (Bogie b : bogieList) {
+            if (b.capacity > threshold) {
+                result.add(b);
+            }
+        }
+        return result;
+    }
+
+    private List<Bogie> filterByStream(List<Bogie> bogieList, int threshold) {
+        return bogieList.stream()
+                .filter(b -> b.capacity > threshold)
+                .collect(Collectors.toList());
+    }
+
     @Test
     void testGrouping_BogiesGroupedByType() {
         List<Bogie> bogieList = new ArrayList<>();
@@ -317,5 +333,77 @@ class TrainConsistManagementAppTest {
         List<GoodsBogie> goodsBogieList = new ArrayList<>();
 
         assertTrue(isSafetyCompliant(goodsBogieList));
+    }
+
+    @Test
+    void testLoopFilteringLogic() {
+        List<Bogie> bogieList = new ArrayList<>();
+        bogieList.add(new Bogie("Sleeper", 72));
+        bogieList.add(new Bogie("AC Chair", 56));
+        bogieList.add(new Bogie("First Class", 24));
+        bogieList.add(new Bogie("Sleeper", 68));
+
+        List<Bogie> result = filterByLoop(bogieList, 60);
+
+        assertEquals(2, result.size());
+        assertTrue(result.stream().allMatch(b -> b.capacity > 60));
+    }
+
+    @Test
+    void testStreamFilteringLogic() {
+        List<Bogie> bogieList = new ArrayList<>();
+        bogieList.add(new Bogie("Sleeper", 72));
+        bogieList.add(new Bogie("AC Chair", 56));
+        bogieList.add(new Bogie("First Class", 24));
+        bogieList.add(new Bogie("Sleeper", 68));
+
+        List<Bogie> result = filterByStream(bogieList, 60);
+
+        assertEquals(2, result.size());
+        assertTrue(result.stream().allMatch(b -> b.capacity > 60));
+    }
+
+    @Test
+    void testLoopAndStreamResultsMatch() {
+        List<Bogie> bogieList = new ArrayList<>();
+        bogieList.add(new Bogie("Sleeper", 72));
+        bogieList.add(new Bogie("AC Chair", 56));
+        bogieList.add(new Bogie("First Class", 24));
+        bogieList.add(new Bogie("Sleeper", 68));
+        bogieList.add(new Bogie("AC Chair", 60));
+
+        List<Bogie> loopResult   = filterByLoop(bogieList, 60);
+        List<Bogie> streamResult = filterByStream(bogieList, 60);
+
+        assertEquals(loopResult.size(), streamResult.size());
+    }
+
+    @Test
+    void testExecutionTimeMeasurement() {
+        List<Bogie> bogieList = new ArrayList<>();
+        bogieList.add(new Bogie("Sleeper", 72));
+        bogieList.add(new Bogie("AC Chair", 56));
+        bogieList.add(new Bogie("First Class", 24));
+
+        long start = System.nanoTime();
+        filterByLoop(bogieList, 60);
+        long end = System.nanoTime();
+
+        assertTrue((end - start) > 0);
+    }
+
+    @Test
+    void testLargeDatasetProcessing() {
+        List<Bogie> largeBogieList = new ArrayList<>();
+        for (int i = 0; i < 100000; i++) {
+            largeBogieList.add(new Bogie("Sleeper", 50 + (i % 50)));
+        }
+
+        List<Bogie> loopResult   = filterByLoop(largeBogieList, 60);
+        List<Bogie> streamResult = filterByStream(largeBogieList, 60);
+
+        assertEquals(loopResult.size(), streamResult.size());
+        assertTrue(loopResult.stream().allMatch(b -> b.capacity > 60));
+        assertTrue(streamResult.stream().allMatch(b -> b.capacity > 60));
     }
 }
