@@ -59,5 +59,11 @@ public class TrainConsistManagementApp {
             System.out.println("\nType: " + type);
             bogies.forEach(b -> System.out.println("  " + b));
         });
+
+        int totalSeats = bogieList.stream()
+                .map(b -> b.capacity)
+                .reduce(0, Integer::sum);
+
+        System.out.println("\nTotal Seating Capacity of Train: " + totalSeats);
     }
 }
