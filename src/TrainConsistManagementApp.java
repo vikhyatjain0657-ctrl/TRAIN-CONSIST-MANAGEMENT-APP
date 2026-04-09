@@ -3,6 +3,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 class Bogie {
     String name;
@@ -65,5 +67,28 @@ public class TrainConsistManagementApp {
                 .reduce(0, Integer::sum);
 
         System.out.println("\nTotal Seating Capacity of Train: " + totalSeats);
+
+        Pattern trainIdPattern = Pattern.compile("TRN-\\d{4}");
+        Pattern cargoCodePattern = Pattern.compile("PET-[A-Z]{2}");
+
+        String trainId = "TRN-1234";
+        String cargoCode = "PET-AB";
+
+        Matcher trainIdMatcher = trainIdPattern.matcher(trainId);
+        Matcher cargoCodeMatcher = cargoCodePattern.matcher(cargoCode);
+
+        System.out.println("\n=== UC11: Train ID & Cargo Code Validation ===");
+
+        if (trainIdMatcher.matches()) {
+            System.out.println("Train ID: " + trainId + " -> Valid");
+        } else {
+            System.out.println("Train ID: " + trainId + " -> Invalid");
+        }
+
+        if (cargoCodeMatcher.matches()) {
+            System.out.println("Cargo Code: " + cargoCode + " -> Valid");
+        } else {
+            System.out.println("Cargo Code: " + cargoCode + " -> Invalid");
+        }
     }
 }
