@@ -54,7 +54,7 @@ class TrainConsistManagementAppTest {
     }
 
     @Test
-    void testGrouping_BogiesGroupedByType() {
+    void testGrouping_BogiesGroupedByType() throws InvalidCapacityException {
         List<Bogie> bogieList = new ArrayList<>();
         bogieList.add(new Bogie("Sleeper", 72));
         bogieList.add(new Bogie("AC Chair", 56));
@@ -68,7 +68,7 @@ class TrainConsistManagementAppTest {
     }
 
     @Test
-    void testGrouping_MultipleBogiesInSameGroup() {
+    void testGrouping_MultipleBogiesInSameGroup() throws InvalidCapacityException {
         List<Bogie> bogieList = new ArrayList<>();
         bogieList.add(new Bogie("Sleeper", 72));
         bogieList.add(new Bogie("Sleeper", 68));
@@ -81,7 +81,7 @@ class TrainConsistManagementAppTest {
     }
 
     @Test
-    void testGrouping_DifferentBogieTypes() {
+    void testGrouping_DifferentBogieTypes() throws InvalidCapacityException {
         List<Bogie> bogieList = new ArrayList<>();
         bogieList.add(new Bogie("Sleeper", 72));
         bogieList.add(new Bogie("AC Chair", 56));
@@ -103,7 +103,7 @@ class TrainConsistManagementAppTest {
     }
 
     @Test
-    void testGrouping_MapContainsCorrectKeys() {
+    void testGrouping_MapContainsCorrectKeys() throws InvalidCapacityException {
         List<Bogie> bogieList = new ArrayList<>();
         bogieList.add(new Bogie("Sleeper", 72));
         bogieList.add(new Bogie("AC Chair", 56));
@@ -116,7 +116,7 @@ class TrainConsistManagementAppTest {
     }
 
     @Test
-    void testGrouping_GroupSizeValidation() {
+    void testGrouping_GroupSizeValidation() throws InvalidCapacityException {
         List<Bogie> bogieList = new ArrayList<>();
         bogieList.add(new Bogie("Sleeper", 72));
         bogieList.add(new Bogie("Sleeper", 68));
@@ -132,7 +132,7 @@ class TrainConsistManagementAppTest {
     }
 
     @Test
-    void testGrouping_SingleBogieCategory() {
+    void testGrouping_SingleBogieCategory() throws InvalidCapacityException {
         List<Bogie> bogieList = new ArrayList<>();
         bogieList.add(new Bogie("Sleeper", 72));
         bogieList.add(new Bogie("Sleeper", 68));
@@ -145,7 +145,7 @@ class TrainConsistManagementAppTest {
     }
 
     @Test
-    void testGrouping_OriginalListUnchanged() {
+    void testGrouping_OriginalListUnchanged() throws InvalidCapacityException {
         List<Bogie> bogieList = new ArrayList<>();
         bogieList.add(new Bogie("Sleeper", 72));
         bogieList.add(new Bogie("AC Chair", 56));
@@ -161,7 +161,7 @@ class TrainConsistManagementAppTest {
     }
 
     @Test
-    void testReduce_TotalSeatCalculation() {
+    void testReduce_TotalSeatCalculation() throws InvalidCapacityException {
         List<Bogie> bogieList = new ArrayList<>();
         bogieList.add(new Bogie("Sleeper", 72));
         bogieList.add(new Bogie("AC Chair", 56));
@@ -171,7 +171,7 @@ class TrainConsistManagementAppTest {
     }
 
     @Test
-    void testReduce_MultipleBogiesAggregation() {
+    void testReduce_MultipleBogiesAggregation() throws InvalidCapacityException {
         List<Bogie> bogieList = new ArrayList<>();
         bogieList.add(new Bogie("Sleeper", 72));
         bogieList.add(new Bogie("Sleeper", 68));
@@ -183,7 +183,7 @@ class TrainConsistManagementAppTest {
     }
 
     @Test
-    void testReduce_SingleBogieCapacity() {
+    void testReduce_SingleBogieCapacity() throws InvalidCapacityException {
         List<Bogie> bogieList = new ArrayList<>();
         bogieList.add(new Bogie("Sleeper", 72));
 
@@ -198,7 +198,7 @@ class TrainConsistManagementAppTest {
     }
 
     @Test
-    void testReduce_CorrectCapacityExtraction() {
+    void testReduce_CorrectCapacityExtraction() throws InvalidCapacityException {
         List<Bogie> bogieList = new ArrayList<>();
         bogieList.add(new Bogie("Sleeper", 72));
         bogieList.add(new Bogie("AC Chair", 56));
@@ -213,7 +213,7 @@ class TrainConsistManagementAppTest {
     }
 
     @Test
-    void testReduce_AllBogiesIncluded() {
+    void testReduce_AllBogiesIncluded() throws InvalidCapacityException {
         List<Bogie> bogieList = new ArrayList<>();
         bogieList.add(new Bogie("Sleeper", 72));
         bogieList.add(new Bogie("AC Chair", 56));
@@ -223,7 +223,7 @@ class TrainConsistManagementAppTest {
     }
 
     @Test
-    void testReduce_OriginalListUnchanged() {
+    void testReduce_OriginalListUnchanged() throws InvalidCapacityException {
         List<Bogie> bogieList = new ArrayList<>();
         bogieList.add(new Bogie("Sleeper", 72));
         bogieList.add(new Bogie("AC Chair", 56));
@@ -336,7 +336,7 @@ class TrainConsistManagementAppTest {
     }
 
     @Test
-    void testLoopFilteringLogic() {
+    void testLoopFilteringLogic() throws InvalidCapacityException {
         List<Bogie> bogieList = new ArrayList<>();
         bogieList.add(new Bogie("Sleeper", 72));
         bogieList.add(new Bogie("AC Chair", 56));
@@ -350,7 +350,7 @@ class TrainConsistManagementAppTest {
     }
 
     @Test
-    void testStreamFilteringLogic() {
+    void testStreamFilteringLogic() throws InvalidCapacityException {
         List<Bogie> bogieList = new ArrayList<>();
         bogieList.add(new Bogie("Sleeper", 72));
         bogieList.add(new Bogie("AC Chair", 56));
@@ -364,7 +364,7 @@ class TrainConsistManagementAppTest {
     }
 
     @Test
-    void testLoopAndStreamResultsMatch() {
+    void testLoopAndStreamResultsMatch() throws InvalidCapacityException {
         List<Bogie> bogieList = new ArrayList<>();
         bogieList.add(new Bogie("Sleeper", 72));
         bogieList.add(new Bogie("AC Chair", 56));
@@ -379,7 +379,7 @@ class TrainConsistManagementAppTest {
     }
 
     @Test
-    void testExecutionTimeMeasurement() {
+    void testExecutionTimeMeasurement() throws InvalidCapacityException {
         List<Bogie> bogieList = new ArrayList<>();
         bogieList.add(new Bogie("Sleeper", 72));
         bogieList.add(new Bogie("AC Chair", 56));
@@ -393,7 +393,7 @@ class TrainConsistManagementAppTest {
     }
 
     @Test
-    void testLargeDatasetProcessing() {
+    void testLargeDatasetProcessing() throws InvalidCapacityException {
         List<Bogie> largeBogieList = new ArrayList<>();
         for (int i = 0; i < 100000; i++) {
             largeBogieList.add(new Bogie("Sleeper", 50 + (i % 50)));
@@ -405,5 +405,57 @@ class TrainConsistManagementAppTest {
         assertEquals(loopResult.size(), streamResult.size());
         assertTrue(loopResult.stream().allMatch(b -> b.capacity > 60));
         assertTrue(streamResult.stream().allMatch(b -> b.capacity > 60));
+    }
+
+    @Test
+    void testException_ValidCapacityCreation() throws InvalidCapacityException {
+        Bogie bogie = new Bogie("Sleeper", 72);
+
+        assertNotNull(bogie);
+        assertEquals("Sleeper", bogie.name);
+        assertEquals(72, bogie.capacity);
+    }
+
+    @Test
+    void testException_NegativeCapacityThrowsException() {
+        assertThrows(InvalidCapacityException.class,
+                () -> new Bogie("Sleeper", -10));
+    }
+
+    @Test
+    void testException_ZeroCapacityThrowsException() {
+        assertThrows(InvalidCapacityException.class,
+                () -> new Bogie("AC Chair", 0));
+    }
+
+    @Test
+    void testException_ExceptionMessageValidation() {
+        InvalidCapacityException exception = assertThrows(
+                InvalidCapacityException.class,
+                () -> new Bogie("Sleeper", -5));
+
+        assertEquals("Capacity must be greater than zero", exception.getMessage());
+    }
+
+    @Test
+    void testException_ObjectIntegrityAfterCreation() throws InvalidCapacityException {
+        Bogie bogie = new Bogie("First Class", 48);
+
+        assertEquals("First Class", bogie.name);
+        assertEquals(48, bogie.capacity);
+    }
+
+    @Test
+    void testException_MultipleValidBogiesCreation() throws InvalidCapacityException {
+        Bogie sleeper    = new Bogie("Sleeper", 72);
+        Bogie acChair    = new Bogie("AC Chair", 56);
+        Bogie firstClass = new Bogie("First Class", 24);
+
+        assertNotNull(sleeper);
+        assertNotNull(acChair);
+        assertNotNull(firstClass);
+        assertEquals(72, sleeper.capacity);
+        assertEquals(56, acChair.capacity);
+        assertEquals(24, firstClass.capacity);
     }
 }
